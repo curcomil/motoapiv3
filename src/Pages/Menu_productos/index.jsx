@@ -15,7 +15,7 @@ const ProductsPage = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/getproducts")
+      .get("https://motoapibackv3.vercel.app/api/getproducts")
       .then((response) => {
         const productsData = response.data;
         setProductsData(productsData);

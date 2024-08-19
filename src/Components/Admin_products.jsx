@@ -42,7 +42,9 @@ const Admin_products = ({
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete(`http://localhost:3000/api/products/${productId}`);
+          await axios.delete(
+            `https://motoapibackv3.vercel.app/api/products/${productId}`
+          );
           // Si tienes una función para actualizar la lista de productos, llámala aquí.
           if (onDelete) {
             onDelete(productId);

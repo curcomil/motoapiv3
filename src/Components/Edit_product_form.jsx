@@ -12,7 +12,7 @@ const EditProductForm = ({ product, closeModal }) => {
     try {
       // Enviar los datos actualizados
       await axios.put(
-        `http://localhost:3000/api/products/${product.id}`,
+        `https://motoapibackv3.vercel.app/api/products/${product.id}`,
         data,
         {
           headers: { "Content-Type": "application/json" },

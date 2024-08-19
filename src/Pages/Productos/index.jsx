@@ -19,7 +19,7 @@ const Productos = () => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3000/api/getproducts"
+          "https://motoapibackv3.vercel.app/api/getproducts"
         );
         setProducts(response.data);
       } catch (error) {
@@ -37,7 +37,7 @@ const Productos = () => {
   const confirmDelete = async () => {
     try {
       await axios.delete(
-        `http://localhost:3000/api/products/${deletingProductId}`
+        `https://motoapibackv3.vercel.app/api/products/${deletingProductId}`
       );
       setProducts(
         products.filter((product) => product._id !== deletingProductId)
@@ -51,7 +51,7 @@ const Productos = () => {
   const handleAddSubmit = async (formData) => {
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/newproduct",
+        "https://motoapibackv3.vercel.app/api/newproduct",
         formData
       );
       setProducts([...products, response.data.product]);
@@ -83,7 +83,7 @@ const Productos = () => {
       const token = localStorage.getItem("token");
 
       const res = await axios.post(
-        `http://localhost:3000/api/products/${productId}/questions/${questionId}/response`,
+        `https://motoapibackv3.vercel.app/api/products/${productId}/questions/${questionId}/response`,
         { response: responseText },
         {
           headers: {
@@ -108,7 +108,7 @@ const Productos = () => {
   const logout = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/auth/logout",
+        "https://motoapibackv3.vercel.app/api/auth/logout",
         {},
         { withCredentials: true }
       );

@@ -14,7 +14,9 @@ function OrderPages() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/orders");
+        const response = await axios.get(
+          "https://motoapibackv3.vercel.app/api/orders"
+        );
         console.log(response.data);
         setOrders(response.data || []);
       } catch (error) {
@@ -38,7 +40,7 @@ function OrderPages() {
     if (selectedOrder) {
       try {
         await axios.put(
-          `http://localhost:3000/api/orders/${selectedOrder._id}`,
+          `https://motoapibackv3.vercel.app/api/orders/${selectedOrder._id}`,
           {
             items: selectedOrder.items,
             numero_guia: selectedOrder.numero_guia,
@@ -46,7 +48,9 @@ function OrderPages() {
           }
         );
         setShowPopup(false);
-        const response = await axios.get("http://localhost:3000/api/orders");
+        const response = await axios.get(
+          "https://motoapibackv3.vercel.app/api/orders"
+        );
         setOrders(response.data || []);
       } catch (error) {
         console.error("Error al actualizar la orden", error);

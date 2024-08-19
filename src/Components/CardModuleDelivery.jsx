@@ -48,7 +48,7 @@ const CardDelivery = ({
 
     try {
       const response = await axios.put(
-        `http://localhost:3000/api/orders/${orderId}`,
+        `https://motoapibackv3.vercel.app/api/orders/${orderId}`,
         {
           numero_guia: newDescriptionGuide,
           paqueteria: newParcelService,

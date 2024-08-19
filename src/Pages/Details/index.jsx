@@ -20,7 +20,9 @@ const ProductPage = () => {
     if (value) {
       console.log("Fetching product with id:", value);
       axios
-        .get("http://localhost:3000/api/getproduct", { params: { id: value } })
+        .get("https://motoapibackv3.vercel.app/api/getproduct", {
+          params: { id: value },
+        })
         .then((response) => {
           console.log("API response:", response);
           setProduct(response.data);
@@ -37,7 +39,7 @@ const ProductPage = () => {
   const onclickcarrito = async () => {
     try {
       await axios.post(
-        "http://localhost:3000/api/newpedido",
+        "https://motoapibackv3.vercel.app/api/newpedido",
         {
           productos: [
             {
@@ -74,7 +76,7 @@ const ProductPage = () => {
   const onSubmit = async (data) => {
     try {
       const response = await axios.post(
-        `http://localhost:3000/api/products/${value}/questions`,
+        `https://motoapibackv3.vercel.app/api/products/${value}/questions`,
         data,
         {
           withCredentials: true,

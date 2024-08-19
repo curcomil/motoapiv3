@@ -21,7 +21,9 @@ const EditProfileForm = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/auth/profile", { withCredentials: true })
+      .get("https://motoapibackv3.vercel.app/api/auth/profile", {
+        withCredentials: true,
+      })
       .then((response) => {
         setProfileData(response.data);
         setValue("nombre", response.data.nombre);
@@ -41,9 +43,13 @@ const EditProfileForm = () => {
 
   const onSubmit = async (data) => {
     try {
-      await axios.put("http://localhost:3000/api/auth/update", data, {
-        withCredentials: true,
-      });
+      await axios.put(
+        "https://motoapibackv3.vercel.app/api/auth/update",
+        data,
+        {
+          withCredentials: true,
+        }
+      );
       Swal.fire({
         title: "Perfil actualizado",
         text: "¡Tu perfil ha sido actualizado con éxito!",

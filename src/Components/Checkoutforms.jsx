@@ -20,7 +20,7 @@ export default function CheckoutForm({ items }) {
     const createPaymentIntent = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:3000/api/create-payment-intent",
+          "https://motoapibackv3.vercel.app/api/create-payment-intent",
           { items },
           {
             withCredentials: true, // Envía cookies con la solicitud
@@ -97,7 +97,7 @@ export default function CheckoutForm({ items }) {
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: "http://localhost:5173/Shopping",
+        return_url: "https://motoapiv3.vercel.app/Shopping",
       },
       clientSecret, // Asegúrate de pasar el clientSecret aquí
     });

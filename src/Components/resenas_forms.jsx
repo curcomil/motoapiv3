@@ -12,7 +12,7 @@ export const Resenasforms = ({ id, closeModal, setResponseMessage }) => {
 
     try {
       const response = await axios.post(
-        `http://localhost:3000/api/products/${id}/reviews`,
+        `https://motoapibackv3.vercel.app/api/products/${id}/reviews`,
         data,
         {
           headers: {
