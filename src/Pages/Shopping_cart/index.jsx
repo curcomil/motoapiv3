@@ -118,7 +118,8 @@ const ShoppingCart = () => {
     try {
       for (let item of cartItems) {
         await axios.put(
-          `https://motoapibackv3.vercel.app/api/products/${item.id}/reduce-stock`,
+          `https://motoapibackv3.vercel.app/api/products/${productId}/reduce-stock`,
+          { quantity },
           {
             cantidadComprada: item.quantity,
           }
@@ -151,7 +152,7 @@ const ShoppingCart = () => {
       <br />
       <div className="flex-grow bg-gradient-to-t from-black via-[#0faf09] p-4 sm:p-12 flex flex-col items-center">
         <h1 className="text-center text-3xl text-[#0eff06] mb-8">
-          Carrito de compras|
+          Carrito de compras+
         </h1>
         <div className="bg-[#00000060] rounded-xl p-4 sm:p-12 w-full sm:w-11/12">
           <div className="bg-black rounded-xl p-4 sm:p-12">
