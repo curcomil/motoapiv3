@@ -23,9 +23,9 @@ export default function CheckoutForm({ items }) {
           "https://motoapibackv3.vercel.app/api/create-payment-intent",
           { items },
           {
-            withCredentials: true,
+            withCredentials: true, // Envía cookies con la solicitud
             headers: {
-              "Content-Type": "application/json",
+              "Content-Type": "application/json", // Configura el tipo de contenido
             },
           }
         );
@@ -60,8 +60,6 @@ export default function CheckoutForm({ items }) {
         switch (paymentIntent.status) {
           case "succeeded":
             setMessage("Payment succeeded!");
-            // Llamar a la función para reducir el stock
-            reduceStock();
             break;
           case "processing":
             setMessage("Your payment is processing.");
@@ -86,6 +84,7 @@ export default function CheckoutForm({ items }) {
 
     setIsLoading(true);
 
+    // Primero, se llama a elements.submit() para validar el formulario
     const { error: submitError } = await elements.submit();
 
     if (submitError) {
@@ -94,12 +93,13 @@ export default function CheckoutForm({ items }) {
       return;
     }
 
+    // Después de que elements.submit() se complete con éxito, confirmamos el pago
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
         return_url: "https://motoapiv3.vercel.app/Shopping",
       },
-      clientSecret,
+      clientSecret, // Asegúrate de pasar el clientSecret aquí
     });
 
     if (error) {
@@ -111,24 +111,6 @@ export default function CheckoutForm({ items }) {
     }
 
     setIsLoading(false);
-  };
-
-  const reduceStock = async () => {
-    try {
-      // Recorremos cada producto para actualizar su stock
-      for (const item of items) {
-        await axios.put(
-          `https://motoapibackv3.vercel.app/products/${item.id}/reduce-stock`,
-          {
-            quantity: item.quantity,
-          }
-        );
-      }
-      console.log("Stock actualizado correctamente.");
-    } catch (error) {
-      console.error("Error al reducir el stock:", error);
-      setMessage("Error al reducir el stock: " + error.message);
-    }
   };
 
   const paymentElementOptions = {
