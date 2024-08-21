@@ -6,7 +6,7 @@ import {
   useElements,
 } from "@stripe/react-stripe-js";
 
-export default function CheckoutForm({ items, onSuccess }) {
+export default function CheckoutForm({ items }) {
   const stripe = useStripe();
   const elements = useElements();
 
@@ -23,9 +23,9 @@ export default function CheckoutForm({ items, onSuccess }) {
           "https://motoapibackv3.vercel.app/api/create-payment-intent",
           { items },
           {
-            withCredentials: true,
+            withCredentials: true, // Envía cookies con la solicitud
             headers: {
-              "Content-Type": "application/json",
+              "Content-Type": "application/json", // Configura el tipo de contenido
             },
           }
         );
@@ -52,31 +52,27 @@ export default function CheckoutForm({ items, onSuccess }) {
       "payment_intent_client_secret"
     );
 
-    if (clientSecretFromURL) {
-      stripe
-        .retrievePaymentIntent(clientSecretFromURL)
-        .then(({ paymentIntent }) => {
-          switch (paymentIntent.status) {
-            case "succeeded":
-              setMessage("Payment succeeded!");
-              if (onSuccess) onSuccess(true);
-              break;
-            case "processing":
-              setMessage("Your payment is processing.");
-              if (onSuccess) onSuccess(false);
-              break;
-            case "requires_payment_method":
-              setMessage("Your payment was not successful, please try again.");
-              if (onSuccess) onSuccess(false);
-              break;
-            default:
-              setMessage("Something went wrong.");
-              if (onSuccess) onSuccess(false);
-              break;
-          }
-        });
-    }
-  }, [stripe, clientSecret, onSuccess]);
+    if (!clientSecretFromURL) return;
+
+    stripe
+      .retrievePaymentIntent(clientSecretFromURL)
+      .then(({ paymentIntent }) => {
+        switch (paymentIntent.status) {
+          case "succeeded":
+            setMessage("Payment succeeded!");
+            break;
+          case "processing":
+            setMessage("Your payment is processing.");
+            break;
+          case "requires_payment_method":
+            setMessage("Your payment was not successful, please try again.");
+            break;
+          default:
+            setMessage("Something went wrong.");
+            break;
+        }
+      });
+  }, [stripe, clientSecret]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -88,12 +84,22 @@ export default function CheckoutForm({ items, onSuccess }) {
 
     setIsLoading(true);
 
+    // Primero, se llama a elements.submit() para validar el formulario
+    const { error: submitError } = await elements.submit();
+
+    if (submitError) {
+      setMessage(submitError.message);
+      setIsLoading(false);
+      return;
+    }
+
+    // Después de que elements.submit() se complete con éxito, confirmamos el pago
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
         return_url: "https://motoapiv3.vercel.app/Shopping",
       },
-      clientSecret,
+      clientSecret, // Asegúrate de pasar el clientSecret aquí
     });
 
     if (error) {
