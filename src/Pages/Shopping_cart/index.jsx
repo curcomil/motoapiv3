@@ -17,9 +17,9 @@ const stripePromise = loadStripe(
 const ShoppingCart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [profileData, setProfileData] = useState(null);
-  const [showPayment, setShowPayment] = useState(false); // Estado para mostrar el formulario
-  const [paymentItems, setPaymentItems] = useState(null); // Estado para almacenar los datos de pago
-  const [message, setMessage] = useState(""); // Estado para mensajes de compra
+  const [showPayment, setShowPayment] = useState(false);
+  const [paymentItems, setPaymentItems] = useState(null);
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     axios
@@ -84,7 +84,7 @@ const ShoppingCart = () => {
     setCartItems(updatedCartItems);
   };
 
-  const handleCheckout = async () => {
+  const handleCheckout = () => {
     const items = {
       orderId: Math.floor(Math.random() * 1000), // Ejemplo de generación de orderId. Puedes cambiarlo según tu lógica.
       items: cartItems.map((item) => ({
@@ -95,34 +95,17 @@ const ShoppingCart = () => {
       total: totalFinal, // Usa el total calculado
     };
 
-    setPaymentItems(items); // Establecer los datos para el formulario de pago
-    setShowPayment(true); // Mostrar el formulario de pago
-
-    // Llama a reduceProductStock para cada producto
-    try {
-      for (const item of cartItems) {
-        await axios.put(
-          `https://motoapibackv3.vercel.app/api/products/${item.id}/reduce-stock`,
-          {
-            quantity: item.quantity,
-          }
-        );
-      }
-    } catch (error) {
-      console.error("Error al reducir el stock:", error);
-      // Maneja el error si es necesario
-    }
+    setPaymentItems(items);
+    setShowPayment(true);
   };
 
   const handlePurchase = async () => {
     try {
+      // Llama a reduceProductStock para cada producto
       for (let item of cartItems) {
         await axios.put(
-          `https://motoapibackv3.vercel.app/api/products/${productId}/reduce-stock`,
-          { quantity },
-          {
-            cantidadComprada: item.quantity,
-          }
+          `https://motoapibackv3.vercel.app/api/products/${item.id}/reduce-stock`,
+          { quantity: item.quantity }
         );
       }
 
@@ -152,7 +135,7 @@ const ShoppingCart = () => {
       <br />
       <div className="flex-grow bg-gradient-to-t from-black via-[#0faf09] p-4 sm:p-12 flex flex-col items-center">
         <h1 className="text-center text-3xl text-[#0eff06] mb-8">
-          Carrito de compras+
+          Carrito de compras*
         </h1>
         <div className="bg-[#00000060] rounded-xl p-4 sm:p-12 w-full sm:w-11/12">
           <div className="bg-black rounded-xl p-4 sm:p-12">
