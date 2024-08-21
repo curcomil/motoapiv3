@@ -103,7 +103,7 @@ const ShoppingCart = () => {
     try {
       for (let item of cartItems) {
         await axios.put(
-          `https://motoapibackv3.vercel.app/api/products/${item.id}/reduce-stock`, // Verifica que aquí estés usando `item.id`
+          `https://motoapibackv3.vercel.app/api/products/${item._id}/reduce-stock`, // Verifica que aquí estés usando `item.id`
           { quantity: item.quantity }
         );
       }
@@ -134,7 +134,7 @@ const ShoppingCart = () => {
       <br />
       <div className="flex-grow bg-gradient-to-t from-black via-[#0faf09] p-4 sm:p-12 flex flex-col items-center">
         <h1 className="text-center text-3xl text-[#0eff06] mb-8">
-          Carrito de compras*
+          Carrito de compras°
         </h1>
         <div className="bg-[#00000060] rounded-xl p-4 sm:p-12 w-full sm:w-11/12">
           <div className="bg-black rounded-xl p-4 sm:p-12">
@@ -144,17 +144,17 @@ const ShoppingCart = () => {
                   <TransitionGroup>
                     {cartItems.map((item) => (
                       <CSSTransition
-                        key={item.id}
+                        key={item._id}
                         timeout={500}
                         classNames="item"
                       >
                         <CartItem
-                          id={item.id}
+                          id={item._id}
                           name={item.name}
                           quantity={item.quantity}
                           price={item.price}
                           onDelete={() =>
-                            handleDelete(item.id, item.pedido_delete)
+                            handleDelete(item._id, item.pedido_delete)
                           }
                           onQuantityChange={handleQuantityChange}
                           image={item.image}
