@@ -17,14 +17,13 @@ const stripePromise = loadStripe(
 const ShoppingCart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [profileData, setProfileData] = useState(null);
-  const [showPayment, setShowPayment] = useState(false); // Nuevo estado para mostrar el formulario
+  const [showPayment, setShowPayment] = useState(false); // Estado para mostrar el formulario
   const [paymentItems, setPaymentItems] = useState(null); // Estado para almacenar los datos de pago
+  const [message, setMessage] = useState(""); // Estado para mensajes de compra
 
   useEffect(() => {
     axios
-      .get("https://motoapibackv3.vercel.app/api/auth/profile", {
-        withCredentials: true,
-      })
+      .get("http://localhost:3000/api/auth/profile", { withCredentials: true })
       .then((response) => {
         setProfileData(response.data);
       })
@@ -35,12 +34,9 @@ const ShoppingCart = () => {
 
   const initialCartItems = async () => {
     try {
-      const response = await axios.get(
-        "https://motoapibackv3.vercel.app/api/pedido",
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await axios.get("http://localhost:3000/api/pedido", {
+        withCredentials: true,
+      });
       const pedidos = response.data;
       const items = pedidos.flatMap((pedido) =>
         pedido.productos.map((producto) => ({
@@ -64,12 +60,9 @@ const ShoppingCart = () => {
 
   const handleDelete = async (productoId, pedidoId) => {
     try {
-      await axios.delete(
-        `https://motoapibackv3.vercel.app/api/pedido/${pedidoId}`,
-        {
-          withCredentials: true,
-        }
-      );
+      await axios.delete(`http://localhost:3000/api/pedido/${pedidoId}`, {
+        withCredentials: true,
+      });
       setCartItems(cartItems.filter((item) => item.id !== productoId));
     } catch (error) {
       console.error("Error al eliminar el pedido:", error);
@@ -96,6 +89,24 @@ const ShoppingCart = () => {
 
     setPaymentItems(items); // Establecer los datos para el formulario de pago
     setShowPayment(true); // Mostrar el formulario de pago
+  };
+
+  const handlePurchase = async () => {
+    try {
+      for (let item of cartItems) {
+        await axios.put(`/api/products/${item.id}/reduce-stock`, {
+          cantidadComprada: item.quantity,
+        });
+      }
+
+      setMessage("Compra realizada con éxito");
+      setCartItems([]); // Limpiar carrito después de la compra
+    } catch (error) {
+      console.error("Error al procesar la compra:", error);
+      setMessage(
+        error.response?.data?.message || "Error al procesar la compra"
+      );
+    }
   };
 
   const totalPriceProducts = cartItems.reduce(
@@ -207,7 +218,10 @@ const ShoppingCart = () => {
                                   appearance: { theme: "night" },
                                 }}
                               >
-                                <CheckoutForm items={paymentItems} />
+                                <CheckoutForm
+                                  items={paymentItems}
+                                  onSuccess={handlePurchase} // Llama a handlePurchase después del éxito del pago
+                                />
                               </Elements>
                             )}
                           </div>
@@ -229,6 +243,7 @@ const ShoppingCart = () => {
                     )}
                   </div>
                 </div>
+                {message && <p className="text-white mt-4">{message}</p>}
               </div>
             </div>
           </div>
