@@ -23,7 +23,9 @@ const ShoppingCart = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/auth/profile", { withCredentials: true })
+      .get("https://motoapibackv3.vercel.app/api/auth/profile", {
+        withCredentials: true,
+      })
       .then((response) => {
         setProfileData(response.data);
       })
@@ -34,9 +36,12 @@ const ShoppingCart = () => {
 
   const initialCartItems = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/pedido", {
-        withCredentials: true,
-      });
+      const response = await axios.get(
+        "https://motoapibackv3.vercel.app/api/pedido",
+        {
+          withCredentials: true,
+        }
+      );
       const pedidos = response.data;
       const items = pedidos.flatMap((pedido) =>
         pedido.productos.map((producto) => ({
@@ -60,9 +65,12 @@ const ShoppingCart = () => {
 
   const handleDelete = async (productoId, pedidoId) => {
     try {
-      await axios.delete(`http://localhost:3000/api/pedido/${pedidoId}`, {
-        withCredentials: true,
-      });
+      await axios.delete(
+        `https://motoapibackv3.vercel.app/api/pedido/${pedidoId}`,
+        {
+          withCredentials: true,
+        }
+      );
       setCartItems(cartItems.filter((item) => item.id !== productoId));
     } catch (error) {
       console.error("Error al eliminar el pedido:", error);
