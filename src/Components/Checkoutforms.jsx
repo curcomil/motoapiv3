@@ -6,7 +6,7 @@ import {
   useElements,
 } from "@stripe/react-stripe-js";
 
-export default function CheckoutForm({ items, onPurchase }) {
+export default function CheckoutForm({ items }) {
   const stripe = useStripe();
   const elements = useElements();
 
@@ -20,7 +20,7 @@ export default function CheckoutForm({ items, onPurchase }) {
     const createPaymentIntent = async () => {
       try {
         const response = await axios.post(
-          "https://motoapibackv3.vercel.app/api/create-payment-intent",
+          "https://motoapiv3.vercel.app/api/create-payment-intent",
           { items },
           {
             withCredentials: true, // Envía cookies con la solicitud
@@ -60,7 +60,6 @@ export default function CheckoutForm({ items, onPurchase }) {
         switch (paymentIntent.status) {
           case "succeeded":
             setMessage("Payment succeeded!");
-            if (onPurchase) onPurchase(); // Llama a onPurchase si el pago es exitoso
             break;
           case "processing":
             setMessage("Your payment is processing.");
@@ -73,7 +72,7 @@ export default function CheckoutForm({ items, onPurchase }) {
             break;
         }
       });
-  }, [stripe, clientSecret, onPurchase]);
+  }, [stripe, clientSecret]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
