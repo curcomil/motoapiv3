@@ -6,7 +6,7 @@ import {
   useElements,
 } from "@stripe/react-stripe-js";
 
-export default function CheckoutForm({ items, onSuccess }) {
+export default function CheckoutForm({ items, onPurchase }) {
   const stripe = useStripe();
   const elements = useElements();
 
@@ -60,7 +60,7 @@ export default function CheckoutForm({ items, onSuccess }) {
         switch (paymentIntent.status) {
           case "succeeded":
             setMessage("Payment succeeded!");
-            if (onSuccess) onSuccess(); // Llama a onSuccess si el pago es exitoso
+            if (onPurchase) onPurchase(); // Llama a onPurchase si el pago es exitoso
             break;
           case "processing":
             setMessage("Your payment is processing.");
@@ -73,7 +73,7 @@ export default function CheckoutForm({ items, onSuccess }) {
             break;
         }
       });
-  }, [stripe, clientSecret, onSuccess]);
+  }, [stripe, clientSecret, onPurchase]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

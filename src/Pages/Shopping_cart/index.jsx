@@ -229,7 +229,7 @@ const ShoppingCart = () => {
                               >
                                 <CheckoutForm
                                   items={paymentItems}
-                                  onSuccess={handlePurchase} // Pasa handlePurchase como prop
+                                  onPurchase={handlePurchase} // Pasa handlePurchase como prop
                                 />
                               </Elements>
                             )}
