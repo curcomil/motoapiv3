@@ -20,7 +20,7 @@ export default function CheckoutForm({ items }) {
     const createPaymentIntent = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:3000/api/create-payment-intent",
+          "https://motoapibackv3.vercel.app/api/create-payment-intent",
           { items },
           {
             withCredentials: true,
@@ -97,7 +97,7 @@ export default function CheckoutForm({ items }) {
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: "http://localhost:5173/Shopping",
+        return_url: "https://motoapiv3.vercel.app/Shopping",
       },
       clientSecret,
     });
@@ -118,7 +118,7 @@ export default function CheckoutForm({ items }) {
       // Recorremos cada producto para actualizar su stock
       for (const item of items) {
         await axios.put(
-          `http://localhost:3000/api/products/${item.id}/reduce-stock`,
+          `https://motoapibackv3.vercel.app/products/${item.id}/reduce-stock`,
           {
             quantity: item.quantity,
           }

@@ -22,7 +22,7 @@ const ShoppingCart = () => {
 
   useEffect(() => {
     axios
-      .get("https://motoapiv3.vercel.app/api/auth/profile", {
+      .get("https://motoapibackv3.vercel.app/api/auth/profile", {
         withCredentials: true,
       })
       .then((response) => {
@@ -36,7 +36,7 @@ const ShoppingCart = () => {
   const initialCartItems = async () => {
     try {
       const response = await axios.get(
-        "https://motoapiv3.vercel.app/api/pedido",
+        "https://motoapibackv3.vercel.app/api/pedido",
         {
           withCredentials: true,
         }
@@ -65,7 +65,7 @@ const ShoppingCart = () => {
   const handleDelete = async (productoId, pedidoId) => {
     try {
       await axios.delete(
-        `https://motoapiv3.vercel.app/api/pedido/${pedidoId}`,
+        `https://motoapibackv3.vercel.app/api/pedido/${pedidoId}`,
         {
           withCredentials: true,
         }
