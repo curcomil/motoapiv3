@@ -104,11 +104,13 @@ const ShoppingCart = () => {
     console.log(cartItems.map((item) => item.id));
   };
 
-  const handlePurchase = async () => {
-    try {
-      // Mostrar los IDs en la consola antes de realizar la compra
-      watchid();
+  const handlePurchase = async (success) => {
+    if (!success) {
+      setMessage("Error en el pago, no se pudo completar la compra.");
+      return;
+    }
 
+    try {
       for (let item of cartItems) {
         await axios.put(
           `https://motoapibackv3.vercel.app/api/products/${item.id}/reduce-stock`,
