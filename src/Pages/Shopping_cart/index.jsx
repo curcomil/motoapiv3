@@ -87,9 +87,10 @@ const ShoppingCart = () => {
     const items = {
       orderId: Math.floor(Math.random() * 1000), // Ejemplo de generación de orderId. Puedes cambiarlo según tu lógica.
       items: cartItems.map((item) => ({
+        id: item.id, // Se añade el ID del producto
         product_name: item.name,
         amount: item.price,
-        cantidad: item.quantity,
+        quantity: item.quantity, // Cambio de `cantidad` a `quantity` para mantener consistencia
       })),
       total: totalFinal, // Usa el total calculado
     };

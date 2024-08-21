@@ -1,146 +1,303 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
 import {
-  PaymentElement,
   useStripe,
   useElements,
+  PaymentElement,
 } from "@stripe/react-stripe-js";
+import axios from "axios";
 
-export default function CheckoutForm({ items }) {
+const CheckoutForm = ({ items }) => {
   const stripe = useStripe();
   const elements = useElements();
 
-  const [message, setMessage] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [clientSecret, setClientSecret] = useState("");
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-  useEffect(() => {
-    if (!stripe) return;
-
-    const createPaymentIntent = async () => {
-      try {
-        const response = await axios.post(
-          "https://motoapibackv3.vercel.app/api/create-payment-intent",
-          { items },
-          {
-            withCredentials: true, // Envía cookies con la solicitud
-            headers: {
-              "Content-Type": "application/json", // Configura el tipo de contenido
-            },
-          }
-        );
-
-        const data = response.data;
-
-        if (data.clientSecret) {
-          setClientSecret(data.clientSecret);
-        } else {
-          throw new Error("Failed to retrieve clientSecret from the server.");
-        }
-      } catch (error) {
-        setMessage("Error al crear el PaymentIntent: " + error.message);
-      }
-    };
-
-    createPaymentIntent();
-  }, [items, stripe]);
-
-  useEffect(() => {
-    if (!stripe || !clientSecret) return;
-
-    const clientSecretFromURL = new URLSearchParams(window.location.search).get(
-      "payment_intent_client_secret"
-    );
-
-    if (!clientSecretFromURL) return;
-
-    stripe
-      .retrievePaymentIntent(clientSecretFromURL)
-      .then(({ paymentIntent }) => {
-        switch (paymentIntent.status) {
-          case "succeeded":
-            setMessage("Payment succeeded!");
-            break;
-          case "processing":
-            setMessage("Your payment is processing.");
-            break;
-          case "requires_payment_method":
-            setMessage("Your payment was not successful, please try again.");
-            break;
-          default:
-            setMessage("Something went wrong.");
-            break;
-        }
-      });
-  }, [stripe, clientSecret]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!stripe || !elements || !clientSecret) {
-      setMessage("Stripe, elements, or clientSecret is missing.");
+    if (!stripe || !elements) {
       return;
     }
 
-    setIsLoading(true);
-
-    // Primero, se llama a elements.submit() para validar el formulario
-    const { error: submitError } = await elements.submit();
-
-    if (submitError) {
-      setMessage(submitError.message);
-      setIsLoading(false);
-      return;
-    }
-
-    // Después de que elements.submit() se complete con éxito, confirmamos el pago
-    const { error } = await stripe.confirmPayment({
+    const { error, paymentIntent } = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: "https://motoapiv3.vercel.app/Shopping",
+        return_url: "https://your-return-url.com",
       },
-      clientSecret, // Asegúrate de pasar el clientSecret aquí
     });
 
-    if (error) {
-      if (error.type === "card_error" || error.type === "validation_error") {
-        setMessage(error.message);
-      } else {
-        setMessage("An unexpected error occurred.");
-      }
-    }
+    if (!error) {import { useState, useEffect } from "react";
+import CartItem from "../../Components/Cart_item";
+import { TransitionGroup, CSSTransition } from "react-transition-group";
+import "./styles_cart.css";
+import { Navlink } from "../../Components/Navbar_";
+import { Footer } from "../../Components/footer";
+import { Link } from "react-router-dom";
+import axios from "axios";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import CheckoutForm from "../../Components/Checkoutforms";
 
-    setIsLoading(false);
+const stripePromise = loadStripe("pk_test_51PoIHhRvRsZDGGXQtFoKdaPS4R5wx1JPv6LBB4sxo2VeNNgmGMVxHftnGvFbsCTQzhBxumNoAej9ysuid53PFomE00JEY4rQYf");
+
+const ShoppingCart = () => {
+  const [cartItems, setCartItems] = useState([]);
+  const [profileData, setProfileData] = useState(null);
+  const [showPayment, setShowPayment] = useState(false); // Nuevo estado para mostrar el formulario
+  const [paymentItems, setPaymentItems] = useState(null); // Estado para almacenar los datos de pago
+
+  useEffect(() => {
+    axios
+      .get("https://motoapibackv3.vercel.app/api/auth/profile", {
+        withCredentials: true,
+      })
+      .then((response) => {
+        setProfileData(response.data);
+      })
+      .catch((error) => {
+        console.error("Error al obtener los datos del perfil", error);
+      });
+  }, []);
+
+  const initialCartItems = async () => {
+    try {
+      const response = await axios.get(
+        "https://motoapibackv3.vercel.app/api/pedido",
+        {
+          withCredentials: true,
+        }
+      );
+      const pedidos = response.data;
+      const items = pedidos.flatMap((pedido) =>
+        pedido.productos.map((producto) => ({
+          id: producto._id,
+          name: producto.product_name,
+          quantity: producto.cantidad,
+          price: producto.precio,
+          image: producto.image,
+          pedido_delete: pedido._id,
+        }))
+      );
+      setCartItems(items);
+    } catch (error) {
+      console.error("Error al obtener los pedidos:", error);
+    }
   };
 
-  const paymentElementOptions = {
-    layout: "tabs",
+  useEffect(() => {
+    initialCartItems();
+  }, []);
+
+  const handleDelete = async (productoId, pedidoId) => {
+    try {
+      await axios.delete(
+        `https://motoapibackv3.vercel.app/api/pedido/${pedidoId}`,
+        {
+          withCredentials: true,
+        }
+      );
+      setCartItems(cartItems.filter((item) => item.id !== productoId));
+    } catch (error) {
+      console.error("Error al eliminar el pedido:", error);
+    }
+  };
+
+  const handleQuantityChange = (id, newQuantity) => {
+    const updatedCartItems = cartItems.map((item) =>
+      item.id === id ? { ...item, quantity: newQuantity } : item
+    );
+    setCartItems(updatedCartItems);
+  };
+
+  const handleCheckout = () => {
+    const items = {
+      orderId: Math.floor(Math.random() * 1000), // Ejemplo de generación de orderId. Puedes cambiarlo según tu lógica.
+      items: cartItems.map((item) => ({
+        id: item.id, // Se añade el ID del producto
+        product_name: item.name,
+        amount: item.price,
+        quantity: item.quantity, // Cambio de `cantidad` a `quantity` para mantener consistencia
+      })),
+      total: totalFinal, // Usa el total calculado
+    };
+
+    setPaymentItems(items); // Establecer los datos para el formulario de pago
+    setShowPayment(true); // Mostrar el formulario de pago
+  };
+
+  const totalPriceProducts = cartItems.reduce(
+    (total, item) => total + item.quantity * item.price,
+    0
+  );
+
+  const shippingCost = 300;
+  const totalFinal = totalPriceProducts + shippingCost;
+
+  return (
+    <div className="main flex flex-col bg-black min-h-screen">
+      <Navlink />
+      <br />
+      <br />
+      <br />
+      <div className="flex-grow bg-gradient-to-t from-black via-[#0faf09] p-4 sm:p-12 flex flex-col items-center">
+        <h1 className="text-center text-3xl text-[#0eff06] mb-8">
+          Carrito de compras
+        </h1>
+        <div className="bg-[#00000060] rounded-xl p-4 sm:p-12 w-full sm:w-11/12">
+          <div className="bg-black rounded-xl p-4 sm:p-12">
+            <div className="flex flex-col sm:flex-row text-white">
+              <div className="cards_container w-full sm:w-3/5 flex flex-col py-6 px-3">
+                {cartItems.length > 0 ? (
+                  <TransitionGroup>
+                    {cartItems.map((item) => (
+                      <CSSTransition
+                        key={item.id}
+                        timeout={500}
+                        classNames="item"
+                      >
+                        <CartItem
+                          id={item.id}
+                          name={item.name}
+                          quantity={item.quantity}
+                          price={item.price}
+                          onDelete={() =>
+                            handleDelete(item.id, item.pedido_delete)
+                          }
+                          onQuantityChange={handleQuantityChange}
+                          image={item.image}
+                        />
+                      </CSSTransition>
+                    ))}
+                  </TransitionGroup>
+                ) : (
+                  <p className="text-white text-center">
+                    Todavía no has añadido productos a tu carrito :(
+                  </p>
+                )}
+              </div>
+
+              <div className="price_container w-full sm:w-2/5 p-4">
+                <div className="price border-4 rounded-lg p-4 mt-2 border-[#0EFF06]">
+                  <h2 className="text-white mb-4 text-2xl sm:text-3xl">
+                    Envío
+                  </h2>
+                  <div className="adrees_container mb-4 text-lg sm:text-xl font-thin italic">
+                    {profileData && profileData.ciudad ? (
+                      <>
+                        <h2 className="text-white mb-2">
+                          Ciudad: {profileData.ciudad}
+                        </h2>
+                        <h2 className="text-white mb-2">
+                          Calle: {profileData.calle}
+                        </h2>
+                        <h2 className="text-white mb-2">
+                          Estado: {profileData.delegacion}
+                        </h2>
+                        <h2 className="text-white mb-2">
+                          Código postal: {profileData.cp}
+                        </h2>
+                        <h2 className="text-white mb-2">
+                          Referencia: {profileData.referencias}
+                        </h2>
+                        <div className="total_container text-xl sm:text-2xl flex flex-col">
+                          <p className="text-white mb-2">
+                            Productos{" "}
+                            <span className="total_productos">
+                              ${totalPriceProducts}
+                            </span>
+                          </p>
+                          <p className="text-white mb-2">
+                            Envío{" "}
+                            <span className="total_shipping">
+                              ${shippingCost}
+                            </span>
+                          </p>
+                          <p className="text-[#0EFF06] mb-2 text-center">
+                            Total{" "}
+                            <span className="total_final">${totalFinal}</span>
+                          </p>
+                          <div className="button_container">
+                            {!showPayment ? (
+                              <button
+                                className="p-2 bg-[#0EFF06] rounded-lg w-full text-black mt-6"
+                                onClick={handleCheckout}
+                              >
+                                Continuar con la compra
+                              </button>
+                            ) : (
+                              <Elements
+                                stripe={stripePromise}
+                                options={{
+                                  mode: "payment",
+                                  amount: paymentItems.total * 100,
+                                  currency: "mxn",
+                                  appearance: { theme: "night" },
+                                }}
+                              >
+                                <CheckoutForm items={paymentItems} />
+                              </Elements>
+                            )}
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-white">
+                          Antes de continuar, por favor completa tu perfil con
+                          tus datos de envío :)
+                        </p>
+                        <Link
+                          to="/editoruser"
+                          className="text-blue-500 mt-6 text-base sm:text-lg"
+                        >
+                          Completar perfil
+                        </Link>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <Footer />
+    </div>
+  );
+};
+
+export default ShoppingCart;
+
+      try {
+        // Reducción del stock después del pago exitoso
+        await Promise.all(
+          items.items.map(async (item) => {
+            await axios.put(
+              `https://motoapibackv3.vercel.app/api/products/${item.id}`,
+              {
+                quantity: item.quantity,
+              }
+            );
+          })
+        );
+        // Mostrar mensaje de éxito, redirigir, etc.
+      } catch (error) {
+        console.error("Error al reducir el stock:", error);
+      }
+    } else {
+      console.error("Error en el proceso de pago:", error.message);
+    }
   };
 
   return (
-    <form id="payment-form" onSubmit={handleSubmit}>
-      {clientSecret && (
-        <>
-          <PaymentElement
-            id="payment-element"
-            options={paymentElementOptions}
-          />
-          <button
-            disabled={isLoading || !stripe || !elements}
-            className="mt-3 text-black bg-[#0EFF06] rounded-lg font-medium p-2"
-            id="submit"
-          >
-            <span id="button-text">
-              {isLoading ? (
-                <div className="spinner" id="spinner"></div>
-              ) : (
-                "Pagar ahora"
-              )}
-            </span>
-          </button>
-          {message && <div id="payment-message">{message}</div>}
-        </>
-      )}
+    <form onSubmit={handleSubmit}>
+      <PaymentElement />
+      <button
+        type="submit"
+        disabled={!stripe}
+        className="p-2 bg-[#0EFF06] rounded-lg w-full text-black mt-6"
+      >
+        Pagar
+      </button>
     </form>
   );
-}
+};
+
+export default CheckoutForm;
