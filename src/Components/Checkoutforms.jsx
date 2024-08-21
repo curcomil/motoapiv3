@@ -23,9 +23,9 @@ export default function CheckoutForm({ items, onSuccess }) {
           "https://motoapibackv3.vercel.app/api/create-payment-intent",
           { items },
           {
-            withCredentials: true, // Envía cookies con la solicitud
+            withCredentials: true,
             headers: {
-              "Content-Type": "application/json", // Configura el tipo de contenido
+              "Content-Type": "application/json",
             },
           }
         );
@@ -88,22 +88,12 @@ export default function CheckoutForm({ items, onSuccess }) {
 
     setIsLoading(true);
 
-    // Primero, se llama a elements.submit() para validar el formulario
-    const { error: submitError } = await elements.submit();
-
-    if (submitError) {
-      setMessage(submitError.message);
-      setIsLoading(false);
-      return;
-    }
-
-    // Después de que elements.submit() se complete con éxito, confirmamos el pago
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
         return_url: "https://motoapiv3.vercel.app/Shopping",
       },
-      clientSecret, // Asegúrate de pasar el clientSecret aquí
+      clientSecret,
     });
 
     if (error) {
