@@ -102,11 +102,10 @@ const ShoppingCart = () => {
   const handlePurchase = async () => {
     try {
       for (let item of cartItems) {
-        const response = await axios.put(
-          `https://motoapibackv3.vercel.app/api/products/${item.id}/reduce-stock`,
+        await axios.put(
+          `https://motoapibackv3.vercel.app/api/products/${item.id}/reduce-stock`, // Verifica que aquí estés usando `item.id`
           { quantity: item.quantity }
         );
-        console.log("Respuesta del servidor:", response.data);
       }
 
       setMessage("Compra realizada con éxito");
