@@ -52,30 +52,30 @@ export default function CheckoutForm({ items, onSuccess }) {
       "payment_intent_client_secret"
     );
 
-    if (!clientSecretFromURL) return;
-
-    stripe
-      .retrievePaymentIntent(clientSecretFromURL)
-      .then(({ paymentIntent }) => {
-        switch (paymentIntent.status) {
-          case "succeeded":
-            setMessage("Payment succeeded!");
-            if (onSuccess) onSuccess(true);
-            break;
-          case "processing":
-            setMessage("Your payment is processing.");
-            if (onSuccess) onSuccess(false);
-            break;
-          case "requires_payment_method":
-            setMessage("Your payment was not successful, please try again.");
-            if (onSuccess) onSuccess(false);
-            break;
-          default:
-            setMessage("Something went wrong.");
-            if (onSuccess) onSuccess(false);
-            break;
-        }
-      });
+    if (clientSecretFromURL) {
+      stripe
+        .retrievePaymentIntent(clientSecretFromURL)
+        .then(({ paymentIntent }) => {
+          switch (paymentIntent.status) {
+            case "succeeded":
+              setMessage("Payment succeeded!");
+              if (onSuccess) onSuccess(true);
+              break;
+            case "processing":
+              setMessage("Your payment is processing.");
+              if (onSuccess) onSuccess(false);
+              break;
+            case "requires_payment_method":
+              setMessage("Your payment was not successful, please try again.");
+              if (onSuccess) onSuccess(false);
+              break;
+            default:
+              setMessage("Something went wrong.");
+              if (onSuccess) onSuccess(false);
+              break;
+          }
+        });
+    }
   }, [stripe, clientSecret, onSuccess]);
 
   const handleSubmit = async (e) => {
