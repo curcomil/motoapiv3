@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
-import CartItem from "../../Components/Cart_item";
-import { TransitionGroup, CSSTransition } from "react-transition-group";
-import "./styles_cart.css";
-import { Navlink } from "../../Components/Navbar_";
-import { Footer } from "../../Components/footer";
-import { Link } from "react-router-dom";
 import axios from "axios";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import CheckoutForm from "../../Components/Checkoutforms";
+import CartItem from "../../Components/Cart_item";
+import { TransitionGroup, CSSTransition } from "react-transition-group";
+import { Navlink } from "../../Components/Navbar_";
+import { Footer } from "../../Components/footer";
+import { Link } from "react-router-dom";
+import "./styles_cart.css";
 
 const stripePromise = loadStripe(
   "pk_test_51PoIHhRvRsZDGGXQtFoKdaPS4R5wx1JPv6LBB4sxo2VeNNgmGMVxHftnGvFbsCTQzhBxumNoAej9ysuid53PFomE00JEY4rQYf"
@@ -99,11 +99,6 @@ const ShoppingCart = () => {
     setShowPayment(true);
   };
 
-  const watchid = () => {
-    // Asumiendo que `item` es el primer elemento del carrito para este ejemplo
-    console.log(cartItems.map((item) => item.id));
-  };
-
   const handlePurchase = async (success) => {
     if (!success) {
       setMessage("Error en el pago, no se pudo completar la compra.");
@@ -142,132 +137,64 @@ const ShoppingCart = () => {
       <br />
       <br />
       <br />
-      <div className="flex-grow bg-gradient-to-t from-black via-[#0faf09] p-4 sm:p-12 flex flex-col items-center">
-        <h1 className="text-center text-3xl text-[#0eff06] mb-8">
-          Carrito de compras
-        </h1>
-        <div className="bg-[#00000060] rounded-xl p-4 sm:p-12 w-full sm:w-11/12">
-          <div className="bg-black rounded-xl p-4 sm:p-12">
-            <div className="flex flex-col sm:flex-row text-white">
-              <div className="cards_container w-full sm:w-3/5 flex flex-col py-6 px-3">
-                {cartItems.length > 0 ? (
-                  <TransitionGroup>
-                    {cartItems.map((item) => (
-                      <CSSTransition
-                        key={item.id}
-                        timeout={500}
-                        classNames="item"
-                      >
-                        <CartItem
-                          id={item.id}
-                          name={item.name}
-                          quantity={item.quantity}
-                          price={item.price}
-                          onDelete={() =>
-                            handleDelete(item.id, item.pedido_delete)
-                          }
-                          onQuantityChange={handleQuantityChange}
-                          image={item.image}
-                        />
-                      </CSSTransition>
-                    ))}
-                  </TransitionGroup>
-                ) : (
-                  <p className="text-white text-center">
-                    Todavía no has añadido productos a tu carrito :(
-                  </p>
-                )}
-              </div>
-
-              <div className="price_container w-full sm:w-2/5 p-4">
-                <div className="price border-4 rounded-lg p-4 mt-2 border-[#0EFF06]">
-                  <h2 className="text-white mb-4 text-2xl sm:text-3xl">
-                    Envío
-                  </h2>
-                  <div className="adrees_container mb-4 text-lg sm:text-xl font-thin italic">
-                    {profileData && profileData.ciudad ? (
-                      <>
-                        <h2 className="text-white mb-2">
-                          Ciudad: {profileData.ciudad}
-                        </h2>
-                        <h2 className="text-white mb-2">
-                          Calle: {profileData.calle}
-                        </h2>
-                        <h2 className="text-white mb-2">
-                          Estado: {profileData.delegacion}
-                        </h2>
-                        <h2 className="text-white mb-2">
-                          Código postal: {profileData.cp}
-                        </h2>
-                        <h2 className="text-white mb-2">
-                          Referencia: {profileData.referencias}
-                        </h2>
-                        <div className="total_container text-xl sm:text-2xl flex flex-col">
-                          <p className="text-white mb-2">
-                            Productos{" "}
-                            <span className="total_productos">
-                              ${totalPriceProducts}
-                            </span>
-                          </p>
-                          <p className="text-white mb-2">
-                            Envío{" "}
-                            <span className="total_shipping">
-                              ${shippingCost}
-                            </span>
-                          </p>
-                          <p className="text-[#0EFF06] mb-2 text-center">
-                            Total{" "}
-                            <span className="total_final">${totalFinal}</span>
-                          </p>
-                          <div className="button_container">
-                            {!showPayment ? (
-                              <button
-                                className="p-2 bg-[#0EFF06] rounded-lg w-full text-black mt-6"
-                                onClick={handleCheckout}
-                              >
-                                Continuar con la compra
-                              </button>
-                            ) : (
-                              <Elements
-                                stripe={stripePromise}
-                                options={{
-                                  mode: "payment",
-                                  amount: paymentItems.total * 100,
-                                  currency: "mxn",
-                                  appearance: { theme: "night" },
-                                }}
-                              >
-                                <CheckoutForm
-                                  items={paymentItems}
-                                  onSuccess={handlePurchase} // Llama a handlePurchase después del éxito del pago
-                                />
-                              </Elements>
-                            )}
-                          </div>
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <p className="text-white">
-                          Antes de continuar, por favor completa tu perfil con
-                          tus datos de envío :)
-                        </p>
-                        <Link
-                          to="/editoruser"
-                          className="text-blue-500 mt-6 text-base sm:text-lg"
-                        >
-                          Completar perfil
-                        </Link>
-                      </>
-                    )}
+      <div className="flex-grow bg-gradient-to-t from-black via-[#0faf09] p-4 sm:p-12 flex flex-col">
+        <div className="relative container mx-auto">
+          {cartItems.length > 0 ? (
+            <TransitionGroup>
+              {cartItems.map((item) => (
+                <CSSTransition key={item.id} timeout={500} classNames="fade">
+                  <div className="mb-4 flex items-center justify-between p-4 bg-white rounded-lg shadow-md">
+                    <div className="flex items-center">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-16 h-16 object-cover rounded-lg"
+                      />
+                      <div className="ml-4">
+                        <h3 className="text-lg font-semibold">{item.name}</h3>
+                        <p>Precio: ${item.price}</p>
+                        <p>Cantidad: {item.quantity}</p>
+                      </div>
+                    </div>
+                    <button
+                      className="bg-red-500 text-white p-2 rounded-lg"
+                      onClick={() => handleDelete(item.id, item.pedido_delete)}
+                    >
+                      Eliminar
+                    </button>
                   </div>
-                </div>
-                {message && <p className="text-white mt-4">{message}</p>}
-              </div>
+                </CSSTransition>
+              ))}
+            </TransitionGroup>
+          ) : (
+            <div className="text-center text-white">
+              No hay artículos en el carrito.
             </div>
-          </div>
+          )}
+
+          {cartItems.length > 0 && (
+            <div className="mt-4 p-4 bg-white rounded-lg shadow-md">
+              <h2 className="text-lg font-semibold">Resumen del Pedido</h2>
+              <p>Total de productos: ${totalPriceProducts.toFixed(2)}</p>
+              <p>Envío: ${shippingCost.toFixed(2)}</p>
+              <p className="font-semibold">Total: ${totalFinal.toFixed(2)}</p>
+              <button
+                className="mt-4 bg-blue-500 text-white p-2 rounded-lg"
+                onClick={handleCheckout}
+              >
+                Proceder al Pago
+              </button>
+            </div>
+          )}
         </div>
       </div>
+      {showPayment && (
+        <div className="flex justify-center items-center">
+          <Elements stripe={stripePromise}>
+            <CheckoutForm items={paymentItems} onSuccess={handlePurchase} />
+          </Elements>
+        </div>
+      )}
       <Footer />
     </div>
   );
