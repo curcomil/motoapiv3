@@ -13,7 +13,7 @@ const MisCompras = () => {
     const fetchCompras = async () => {
       try {
         const response = await axios.get(
-          "https://motoapibackv3.vercel.app/api/order/find",
+          "https://motocicle-mongoapi-production.up.railway.app/api/order/find",
           {
             withCredentials: true,
           }

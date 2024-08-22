@@ -43,7 +43,7 @@ const Admin_products = ({
       if (result.isConfirmed) {
         try {
           await axios.delete(
-            `https://motoapibackv3.vercel.app/api/products/${productId}`
+            `https://motocicle-mongoapi-production.up.railway.app/api/products/${productId}`
           );
           // Si tienes una función para actualizar la lista de productos, llámala aquí.
           if (onDelete) {

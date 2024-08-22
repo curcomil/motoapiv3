@@ -1,1 +1,2 @@
-export const API_URL = "https://motoapibackv3.vercel.app/api";
+export const API_URL =
+  "https://motocicle-mongoapi-production.up.railway.app/api";

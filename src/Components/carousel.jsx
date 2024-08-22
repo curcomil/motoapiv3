@@ -19,7 +19,7 @@ const Carousel = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "https://motoapibackv3.vercel.app/api/getproducts"
+          "https://motocicle-mongoapi-production.up.railway.app/api/getproducts"
         );
         setItems(response.data);
       } catch (error) {

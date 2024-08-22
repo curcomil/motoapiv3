@@ -21,9 +21,12 @@ const EditProfileForm = () => {
 
   useEffect(() => {
     axios
-      .get("https://motoapibackv3.vercel.app/api/auth/profile", {
-        withCredentials: true,
-      })
+      .get(
+        "https://motocicle-mongoapi-production.up.railway.app/api/auth/profile",
+        {
+          withCredentials: true,
+        }
+      )
       .then((response) => {
         setProfileData(response.data);
         setValue("nombre", response.data.nombre);
@@ -44,7 +47,7 @@ const EditProfileForm = () => {
   const onSubmit = async (data) => {
     try {
       await axios.put(
-        "https://motoapibackv3.vercel.app/api/auth/update",
+        "https://motocicle-mongoapi-production.up.railway.app/api/auth/update",
         data,
         {
           withCredentials: true,

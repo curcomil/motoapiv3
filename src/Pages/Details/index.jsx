@@ -20,9 +20,12 @@ const ProductPage = () => {
     if (value) {
       console.log("Fetching product with id:", value);
       axios
-        .get("https://motoapibackv3.vercel.app/api/getproduct", {
-          params: { id: value },
-        })
+        .get(
+          "https://motocicle-mongoapi-production.up.railway.app/api/getproduct",
+          {
+            params: { id: value },
+          }
+        )
         .then((response) => {
           console.log("API response:", response);
           setProduct(response.data);
@@ -39,7 +42,7 @@ const ProductPage = () => {
   const onclickcarrito = async () => {
     try {
       await axios.post(
-        "https://motoapibackv3.vercel.app/api/newpedido",
+        "https://motocicle-mongoapi-production.up.railway.app/api/newpedido",
         {
           productos: [
             {
@@ -76,7 +79,7 @@ const ProductPage = () => {
   const onSubmit = async (data) => {
     try {
       const response = await axios.post(
-        `https://motoapibackv3.vercel.app/api/products/${value}/questions`,
+        `https://motocicle-mongoapi-production.up.railway.app/api/products/${value}/questions`,
         data,
         {
           withCredentials: true,

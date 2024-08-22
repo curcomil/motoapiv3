@@ -14,7 +14,7 @@ export const Card_coment = () => {
     const fetchReviews = async () => {
       try {
         const response = await axios.get(
-          "https://motoapibackv3.vercel.app/api/getproducts"
+          "https://motocicle-mongoapi-production.up.railway.app/api/getproducts"
         );
         console.log("Data fetched:", response.data);
 

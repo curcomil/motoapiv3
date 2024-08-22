@@ -83,7 +83,7 @@ const Productos = () => {
       const token = localStorage.getItem("token");
 
       const res = await axios.post(
-        `https://motoapibackv3.vercel.app/api/products/${productId}/questions/${questionId}/response`,
+        `https://motocicle-mongoapi-production.up.railway.app/api/products/${productId}/questions/${questionId}/response`,
         { response: responseText },
         {
           headers: {
@@ -108,7 +108,7 @@ const Productos = () => {
   const logout = async () => {
     try {
       const response = await axios.post(
-        "https://motoapibackv3.vercel.app/api/auth/logout",
+        "https://motocicle-mongoapi-production.up.railway.app/api/auth/logout",
         {},
         { withCredentials: true }
       );

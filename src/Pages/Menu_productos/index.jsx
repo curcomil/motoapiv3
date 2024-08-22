@@ -15,7 +15,9 @@ const ProductsPage = () => {
 
   useEffect(() => {
     axios
-      .get("https://motoapibackv3.vercel.app/api/getproducts")
+      .get(
+        "https://motocicle-mongoapi-production.up.railway.app/api/getproducts"
+      )
       .then((response) => {
         const productsData = response.data;
         setProductsData(productsData);

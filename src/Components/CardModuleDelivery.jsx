@@ -48,7 +48,7 @@ const CardDelivery = ({
 
     try {
       const response = await axios.put(
-        `https://motoapibackv3.vercel.app/api/orders/${orderId}`,
+        `https://motocicle-mongoapi-production.up.railway.app/api/orders/${orderId}`,
         {
           numero_guia: newDescriptionGuide,
           paqueteria: newParcelService,

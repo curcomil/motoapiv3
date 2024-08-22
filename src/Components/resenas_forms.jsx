@@ -12,7 +12,7 @@ export const Resenasforms = ({ id, closeModal, setResponseMessage }) => {
 
     try {
       const response = await axios.post(
-        `https://motoapibackv3.vercel.app/api/products/${id}/reviews`,
+        `https://motocicle-mongoapi-production.up.railway.app/api/products/${id}/reviews`,
         data,
         {
           headers: {
