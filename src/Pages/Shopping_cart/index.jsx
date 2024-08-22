@@ -22,9 +22,7 @@ const ShoppingCart = () => {
 
   useEffect(() => {
     axios
-      .get("https://motoapibackv3.vercel.app/api/auth/profile", {
-        withCredentials: true,
-      })
+      .get("http://localhost:3000/api/auth/profile", { withCredentials: true })
       .then((response) => {
         setProfileData(response.data);
       })
@@ -35,12 +33,9 @@ const ShoppingCart = () => {
 
   const initialCartItems = async () => {
     try {
-      const response = await axios.get(
-        "https://motoapibackv3.vercel.app/api/pedido",
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await axios.get("http://localhost:3000/api/pedido", {
+        withCredentials: true,
+      });
       const pedidos = response.data;
       const items = pedidos.flatMap((pedido) =>
         pedido.productos.map((producto) => ({
@@ -64,26 +59,30 @@ const ShoppingCart = () => {
 
   const handleDelete = async (productoId, pedidoId) => {
     try {
-      await axios.delete(
-        `https://motoapibackv3.vercel.app/api/pedido/${pedidoId}`,
-        {
-          withCredentials: true,
-        }
-      );
+      await axios.delete(`http://localhost:3000/api/pedido/${pedidoId}`, {
+        withCredentials: true,
+      });
       setCartItems(cartItems.filter((item) => item.id !== productoId));
     } catch (error) {
       console.error("Error al eliminar el pedido:", error);
     }
   };
 
+  const handleQuantityChange = (id, newQuantity) => {
+    const updatedCartItems = cartItems.map((item) =>
+      item.id === id ? { ...item, quantity: newQuantity } : item
+    );
+    setCartItems(updatedCartItems);
+  };
+
   const handleCheckout = () => {
     const items = {
       orderId: Math.floor(Math.random() * 1000), // Ejemplo de generación de orderId. Puedes cambiarlo según tu lógica.
       items: cartItems.map((item) => ({
-        id: item.id, // Se añade el ID del producto
         product_name: item.name,
         amount: item.price,
-        quantity: item.quantity, // Cambio de `cantidad` a `quantity` para mantener consistencia
+        cantidad: item.quantity,
+        itemId: item.id.toString(),
       })),
       total: totalFinal, // Usa el total calculado
     };
