@@ -76,13 +76,6 @@ const ShoppingCart = () => {
     }
   };
 
-  const handleQuantityChange = (id, newQuantity) => {
-    const updatedCartItems = cartItems.map((item) =>
-      item.id === id ? { ...item, quantity: newQuantity } : item
-    );
-    setCartItems(updatedCartItems);
-  };
-
   const handleCheckout = () => {
     const items = {
       orderId: Math.floor(Math.random() * 1000), // Ejemplo de generación de orderId. Puedes cambiarlo según tu lógica.
