@@ -44,7 +44,7 @@ const ShoppingCart = () => {
       const pedidos = response.data;
       const items = pedidos.flatMap((pedido) =>
         pedido.productos.map((producto) => ({
-          id: producto._id,
+          id: producto.producto,
           name: producto.product_name,
           quantity: producto.cantidad,
           price: producto.precio,
@@ -90,7 +90,7 @@ const ShoppingCart = () => {
         product_name: item.name,
         amount: item.price,
         cantidad: item.quantity,
-        itemId: item.id.toString(),
+        itemId: item.id,
       })),
       total: totalFinal, // Usa el total calculado
     };
