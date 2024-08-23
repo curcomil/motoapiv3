@@ -46,7 +46,7 @@ const ProductPage = () => {
         {
           productos: [
             {
-              producto: value,
+              producto: product._id,
               cantidad: 1,
               precio: product.price,
               product_name: product.productName,
