@@ -47,7 +47,7 @@ const ShoppingCart = () => {
       const pedidos = response.data;
       const items = pedidos.flatMap((pedido) =>
         pedido.productos.map((producto) => ({
-          id: producto._id,
+          id: producto.producto,
           name: producto.product_name,
           quantity: producto.cantidad,
           price: producto.precio,
