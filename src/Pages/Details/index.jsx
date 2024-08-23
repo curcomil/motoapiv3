@@ -46,7 +46,7 @@ const ProductPage = () => {
         {
           productos: [
             {
-              producto: product._id,
+              producto: product._id.toString(),
               cantidad: 1,
               precio: product.price,
               product_name: product.productName,
