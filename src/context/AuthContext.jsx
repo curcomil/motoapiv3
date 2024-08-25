@@ -63,15 +63,21 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const checkLogin = async () => {
+      setLoading(true); // Inicia el loading
       try {
         const res = await verifyTokenRequest();
-        if (!res.data) return setIsAuthenticated(false);
-        setIsAuthenticated(true);
-        setUser(res.data);
+        if (!res.data) {
+          setIsAuthenticated(false);
+          setUser(null); // Asegura que el usuario se borre si no se verifica el token
+        } else {
+          setIsAuthenticated(true);
+          setUser(res.data);
+        }
       } catch (error) {
         setIsAuthenticated(false);
+        setUser(null); // Asegura que el usuario se borre si hay un error
       } finally {
-        setLoading(false);
+        setLoading(false); // Finaliza el loading
       }
     };
     checkLogin();
@@ -89,9 +95,9 @@ export const AuthProvider = ({ children }) => {
         loading,
       }}
     >
-      {children}
+      {!loading && children}{" "}
+      {/* No renderiza los children hasta que loading sea falso */}
     </AuthContext.Provider>
   );
 };
-
 export default AuthContext;
