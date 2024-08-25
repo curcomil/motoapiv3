@@ -109,6 +109,7 @@ const Productos = () => {
   function logout() {
     Cookies.remove("token");
     Cookies.remove("isadmin");
+    navigate("/");
   }
 
   const filteredProducts = products.filter((product) =>
