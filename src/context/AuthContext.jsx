@@ -46,6 +46,9 @@ export const AuthProvider = ({ children }) => {
       setUser(res.data);
       setIsAuthenticated(true);
       Cookies.set("token", res.data.token);
+      if (res.data.isadmin) {
+        Cookies.set("isadmin", true);
+      }
     } catch (error) {
       console.log(error);
       // setErrors(error.response.data.message);
