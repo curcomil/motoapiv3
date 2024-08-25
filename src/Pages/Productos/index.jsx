@@ -5,6 +5,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom/dist";
 import Swal from "sweetalert2";
+import Cookies from "js-cookie";
 
 const Productos = () => {
   const [responseMessage, setResponseMessage] = useState(null);
@@ -105,23 +106,10 @@ const Productos = () => {
     }
   };
 
-  const logout = async () => {
-    try {
-      const response = await axios.post(
-        "https://motocicle-mongoapi-production.up.railway.app/api/auth/logout",
-        {},
-        { withCredentials: true }
-      );
-      console.log(response.data);
-      navigate("/");
-      window.location.reload(true);
-    } catch (error) {
-      console.error("Error during logout:", error);
-      if (error.response) {
-        console.error("Server response:", error.response.data);
-      }
-    }
-  };
+  function logout() {
+    Cookies.remove("token");
+    Cookies.remove("isadmin");
+  }
 
   const filteredProducts = products.filter((product) =>
     product.productName.toLowerCase().includes(searchTerm.toLowerCase())
@@ -156,7 +144,7 @@ const Productos = () => {
           </h2>
           <button
             className="btn hover:bg-[#0eff0601] hover:text-white flex w-auto items-center justify-center rounded-full border border-[#0eff06e9] bg-[#0eff06] bg-gradient-to-tr from-[#0eff06] to-[#78c048]/70 px-4 sm:px-5 md:px-7 py-2.5 font-bold text-slate-800 ring-lime-600 ring-offset-2 ring-offset-slate-700 drop-shadow-[0px_1px_2px_rgb(0,0,0,0.3)] active:ring-1"
-            onClick={logout}
+            onClick={logout()}
           >
             Cerrar sesión
           </button>
