@@ -109,7 +109,7 @@ const Productos = () => {
   function logout() {
     Cookies.remove("token");
     Cookies.remove("isadmin");
-    navigate("/");
+    window.location.href = "/";
   }
 
   const filteredProducts = products.filter((product) =>
